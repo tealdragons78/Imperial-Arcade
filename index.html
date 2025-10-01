@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Empire Arcade</title>
+<!-- Import a classical font -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin:0; font-family:Georgia,serif; color:#3b2f1e;
+    background:linear-gradient(to bottom,#fdf6e3,#c2b280);
+    text-align:center;
+  }
+  header {padding:20px; border-bottom:3px double #a67c52; background:#fffaf0;}
+  header h1 {margin:0; color:#6b4c2e; font-size:36px;}
+  .menu {margin-top:30px;}
+  .menu button {
+    display:block; margin:12px auto; padding:14px 28px; font-size:20px;
+    background:#f4e9d8; border:3px solid #a67c52; border-radius:8px; cursor:pointer;
+    width:240px;
+    font-family:'Cinzel', serif; /* Changed font */
+    font-weight:600;
+  }
+  .menu button:hover {background:#fff8e1;}
+  .stage {margin-top:20px; position:relative; display:none;}
+  canvas {
+    background:#fff8e1; border:4px solid #d4af37;
+    box-shadow:0 6px 24px rgba(166,124,82,0.35);
+  }
+  #hud {
+    position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    background:rgba(255,248,220,0.92); border:2px solid #a67c52;
+    padding:6px 10px; font-size:14px; border-radius:6px;
+  }
+  #backBtn {
+    margin-top:10px; padding:8px 16px; font-size:16px;
+    background:#f4e9d8; border:2px solid #a67c52; border-radius:6px; cursor:pointer;
+  }
+  .helmet {
+    position:fixed; bottom:0; right:0; width:300px; opacity:0.95; pointer-events:none;
+  }
+</style>
+</head>
+<body>
+<header><h1>🏛️ Empire Arcade</h1></header>
+
+<!-- Main Menu -->
+<div class="menu" id="mainMenu">
+  <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Shooter/'">Shooter</button>
+  <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Puzzle/'">Puzzle</button>
+  <button onclick="window.location.href='https://tealdragons78.github.io/Imperial_Runner/'">Runner</button>
+</div>
+
+<img class="helmet" src="https://static.vecteezy.com/system/resources/previews/049/222/958/non_2x/roman-helmet-with-red-plume-cut-out-stock-png.png">
+
+</body>
+</html>
