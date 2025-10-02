@@ -1,59 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>The Empire's Arcade</title>
-<!-- Import a classical font -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin:0; font-family:Georgia,serif; color:#3b2f1e;
-    background:linear-gradient(to bottom,#fdf6e3,#c2b280);
-    text-align:center;
-  }
-  header {padding:20px; border-bottom:3px double #a67c52; background:#fffaf0;}
-  header h1 {margin:0; color:#6b4c2e; font-size:36px;}
-  .menu {margin-top:30px;}
-  .menu button {
-    display:block; margin:12px auto; padding:14px 28px; font-size:20px;
-    background:#f4e9d8; border:3px solid #a67c52; border-radius:8px; cursor:pointer;
-    width:240px;
-    font-family:'Cinzel', serif; /* Changed font */
-    font-weight:600;
-  }
-  .menu button:hover {background:#fff8e1;}
-  .stage {margin-top:20px; position:relative; display:none;}
-  canvas {
-    background:#fff8e1; border:4px solid #d4af37;
-    box-shadow:0 6px 24px rgba(166,124,82,0.35);
-  }
-  #hud {
-    position:absolute; top:8px; left:50%; transform:translateX(-50%);
-    background:rgba(255,248,220,0.92); border:2px solid #a67c52;
-    padding:6px 10px; font-size:14px; border-radius:6px;
-  }
-  #backBtn {
-    margin-top:10px; padding:8px 16px; font-size:16px;
-    background:#f4e9d8; border:2px solid #a67c52; border-radius:6px; cursor:pointer;
-  }
-  .helmet {
-    position:fixed; bottom:0; right:0; width:300px; opacity:0.95; pointer-events:none;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>The Empire's Arcade</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Crimson+Text&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Crimson Text', Georgia, serif;
+      color: #f5e6c8;
+      background: linear-gradient(to top, #120b05 0%, #3b2a18 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      background: radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+      animation: shimmer 12s infinite linear;
+      z-index: 0;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 100% 100%; }
+    }
+
+    header {
+      padding: 25px;
+      border-bottom: 4px double #a67c52;
+      background: rgba(30,20,10,0.85);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #f1d27a;
+      font-size: 46px;
+      font-family: 'Cinzel', serif;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(255,215,128,0.6);
+    }
+
+    .torch {
+      position: absolute;
+      font-size: 32px;
+      top: 18px;
+      z-index: 2;
+      animation: flicker 1s infinite alternate;
+    }
+    .torch.left { left: 20px; }
+    .torch.right { right: 20px; }
+
+    .torch::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, rgba(255,180,80,0.4) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      z-index: -1;
+      animation: glowPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes flicker {
+      from { filter: brightness(0.8); transform: rotate(-2deg); }
+      to { filter: brightness(1.3); transform: rotate(2deg); }
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .menu {
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      z-index: 1;
+      position: relative;
+    }
+
+    .menu button {
+      padding: 14px 32px;
+      font-size: 20px;
+      background: #3b2f1e;
+      border: 3px solid #a67c52;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 280px;
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      color: #f5e6c8;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .menu button:hover {
+      background: #5a4225;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(166,124,82,0.35);
+    }
+
+    .helmet {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 260px;
+      opacity: 0.85;
+      pointer-events: none;
+      animation: floatHelmet 6s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes floatHelmet {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .garden {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      padding: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .bush {
+      height: 100px;
+      transition: transform 0.4s ease;
+      animation: sway 2.5s ease-in-out infinite;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    @keyframes sway {
+      0%   { transform: rotate(0deg) scale(1); }
+      20%  { transform: rotate(4deg) scale(1.02); }
+      40%  { transform: rotate(-5deg) scale(1.04); }
+      60%  { transform: rotate(3deg) scale(1.01); }
+      80%  { transform: rotate(-3deg) scale(1.03); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    .bush.grow {
+      animation: none;
+      transform: scale(1.4);
+    }
+  </style>
 </head>
 <body>
-<header><h1>🏛️ Empire Arcade</h1></header>
 
-<!-- Main Menu -->
-<div class="menu" id="mainMenu">
-  <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Shooter/'">Empire Shooter</button>
-  <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Puzzle/'">Sigil Solver</button>
-  <button onclick="window.location.href='https://tealdragons78.github.io/Imperial_Runner/'">Imperial Runner</button>
-  <button onclick="window.location.href='https://tealdragons78.github.io/Gladiator/'">Gladiator Arena</button>
-</div>
+  <header>
+    <h1>Empire Arcade</h1>
+    <div class="torch left">🔥</div>
+    <div class="torch right">🔥</div>
+  </header>
 
-<img class="helmet" src="https://static.vecteezy.com/system/resources/previews/049/222/958/non_2x/roman-helmet-with-red-plume-cut-out-stock-png.png">
+  <div class="menu" id="mainMenu">
+    <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Shooter/'">Empire Shooter</button>
+    <button onclick="window.location.href='https://tealdragons78.github.io/Empire-Puzzle/'">Sigil Solver</button>
+    <button onclick="window.location.href='https://tealdragons78.github.io/Imperial_Runner/'">Imperial Runner</button>
+    <button onclick="window.location.href='https://tealdragons78.github.io/Gladiator/'">Gladiator Arena</button>
+    <button onclick="alert('Sports section coming soon!')">Sports</button>
+  </div>
+
+  <img class="helmet" src="https://image2url.com/images/1759422721202-8388fd8c-e0f0-49da-8d82-79c7fbf7413f.png" alt="Roman Helmet">
+
+  <div class="garden">
+    <img src="https://purepng.com/public/uploads/large/purepng.com-bushbushplantshrubtrees-1411526813794oiclh.png" alt="Bush" class="bush">
+    <img src="https://purepng.com/public/uploads/large/purepng.com-bushbushplantshrubtrees-1411526813794oiclh.png" alt="Bush" class="bush">
+    <img src="https://purepng.com/public/uploads/large/purepng.com-bushbushplantshrubtrees-1411526813794oiclh.png" alt="Bush" class="bush">
+  </div>
+
+  <script>
+    const bushes = document.querySelectorAll('.bush');
+
+    bushes.forEach(bush => {
+      bush.addEventListener('click', () => {
+        bush.classList.add('grow');
+        setTimeout(() => {
+          bush.classList.remove('grow');
+        }, 1000);
+      });
+    });
+  </script>
 
 </body>
 </html>
-
